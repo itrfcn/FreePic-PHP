@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RF免费图床</title>
+    <!-- 网站图标 -->
+    <link rel="icon" href="http://o.d8n.cn/b/teacher/profile/course/136098/26244/3183c/1774847264048cz64zpce3x.png" type="image/png">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        /* 全局a标签样式 */
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        a:hover {
+            color: #2980b9;
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        /* 头部样式 */
+        header {
+            background: #3498db;
+            color: white;
+            padding: 1.2rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 主要内容区域 */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 容器样式 */
+        .container {
+            max-width: 850px;
+            width: 100%;
+        }
+        
+        /* 上传卡片 */
+        .upload-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 1.5rem auto;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* 标题样式 */
+        .text-center {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .text-center h1 {
+            color: #333;
+            margin-bottom: 0.75rem;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .text-center p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        /* 拖拽区域 */
+        .drop-zone {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            padding: 3rem 1rem;
+            text-align: center;
+            background: #fafafa;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+        
+        .drop-zone.dragover {
+            border-color: #2980b9;
+            background-color: #f0f8ff;
+        }
+        
+        .drop-zone i {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .drop-zone p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        /* 隐藏的文件输入 */
+        #fileInput {
+            display: none;
+        }
+        
+        /* 上传按钮 */
+        .upload-btn {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .upload-btn:hover {
+            background: #2980b9;
+        }
+        
+        .upload-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        /* 已选择文件样式 */
+        #selectedFiles {
+            margin-bottom: 2rem;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .file-item span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .file-item i {
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+        
+        .file-item button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .file-item button:hover {
+            background: #c0392b;
+        }
+        
+        /* 进度条 */
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* 结果显示 */
+        #result {
+            margin-top: 2rem;
+            padding: 1.2rem;
+            border-radius: 6px;
+            display: none;
+            border: 1px solid #ddd;
+        }
+        
+        #result.success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        #result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        #result h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        #result p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        #result a {
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            word-break: break-all;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+        }
+        
+        #result a:hover {
+            color: #495057;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        /* 复制按钮 */
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 0.8rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .upload-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .text-center h1 {
+                font-size: 2rem;
+            }
+            
+            .drop-zone {
+                padding: 3rem 1.5rem;
+            }
+            
+            .drop-zone i {
+                font-size: 4rem;
+            }
+            
+            .file-select-btn {
+                padding: 0.85rem 2rem;
+                font-size: 1rem;
+            }
+            
+            .upload-btn {
+                font-size: 1rem;
+                padding: 0.85rem 2rem;
+            }
+            
+            .copy-btn {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .file-item button {
+                align-self: flex-end;
+            }
+        }
+        
+        /* 移除所有动画效果 */
+        
+        /* 上传区域样式 */
+        .upload-section {
+            max-width: 850px;
+            margin: 0 auto 4rem;
+        }
+        
+        /* 功能介绍样式 */
+        .features-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .feature-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* 使用说明样式 */
+        .usage-section {
+            margin-bottom: 3rem;
+        }
+        
+        .usage-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .usage-step {
+            display: flex;
+            gap: 1.2rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .step-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* 关于我们样式 */
+        .about-section {
+            margin-bottom: 3rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .about-section p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background: #333;
+            color: white;
+            padding: 1.5rem 0;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            transform: scale(1.05);
+        }
+        
+        /* 移除加载动画 */
+        .upload-btn:disabled {
+            animation: none;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            /* 头部响应式 */
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            /* 英雄区域响应式 */
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            /* 功能介绍响应式 */
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 使用说明响应式 */
+            .usage-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 页脚响应式 */
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-cloud-upload-alt"></i>
+                RF免费图床
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#features">功能</a></li>
+                    <li><a href="#usage">使用说明</a></li>
+                    <li><a href="#about">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main>
+        <!-- 英雄区域 -->
+        <section class="hero">
+            <h1>RF免费图床</h1>
+            <p>简单、快速、安全的图片上传与分享平台，无需注册即可使用</p>
+            <div style="color: #e74c3c; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; font-weight: 500;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>禁止上传任何违规内容，包括但不限于违法、色情、侵权等文件</span>
+            </div>
+        </section>
+        
+        <!-- 上传区域 -->
+        <section class="upload-section">
+            <div class="upload-card">
+                <!-- 拖拽区域 -->
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>拖拽文件到此处或点击选择文件</p>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                </div>
+                
+                <!-- 已选择文件 -->
+                <div id="selectedFiles"></div>
+                
+                <!-- 进度条 -->
+                <div class="progress" id="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <!-- 上传按钮 -->
+                <button class="upload-btn" id="uploadBtn" disabled>
+                    <i class="fas fa-upload"></i> 上传文件
+                </button>
+                
+                <!-- 结果显示 -->
+                <div id="result"></div>
+            </div>
+        </section>
+        
+        <!-- 功能介绍 -->
+        <section id="features" class="features-section">
+            <h2 class="section-title">平台特色</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>快速上传</h3>
+                    <p>采用先进的上传技术，确保文件快速稳定地上传到服务器</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>安全可靠</h3>
+                    <p>文件加密存储，保护您的隐私和数据安全</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>全球访问</h3>
+                    <p>CDN加速，确保您的文件在全球范围内快速访问</p>
+                </div>
+
+            </div>
+        </section>
+        
+        <!-- 使用说明 -->
+        <section id="usage" class="usage-section">
+            <h2 class="section-title">使用说明</h2>
+            <div class="usage-steps">
+                <div class="usage-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>选择文件</h3>
+                        <p>点击上传区域或拖拽文件到上传区域，选择您要上传的图片文件</p>
+                    </div>
+                </div>
+                <div class="usage-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>开始上传</h3>
+                        <p>系统会自动开始上传文件，您可以看到上传进度</p>
+                    </div>
+                </div>
+                <div class="usage-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>获取链接</h3>
+                        <p>上传完成后，系统会生成文件链接，您可以复制使用</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 关于我们 -->
+        <section id="about" class="about-section">
+            <h2 class="section-title">关于我们</h2>
+            <p>RF免费图床是一个免费的图片上传与分享平台，致力于为用户提供简单、快速、安全的图片存储服务。</p>
+            <p>如有任何问题或建议，请通过邮箱:<a href="mailto:admin@itrf.cn">admin@itrf.cn</a>联系我们。</p>
+            <p>本站已经开源，您可以在<a href="https://github.com/itrfcn/FreePic-PHP/" target="_blank">开源地址</a>查看代码。</p>
+        </section>
+
+        <!-- 服务条款 -->
+        <section id="terms" class="about-section">
+            <h2 class="section-title">服务条款</h2>
+            <p>本站采用的是班级魔方的存储服务，意味着您的文件将被存储在班级魔方的服务器上，而不是在本站的服务器上。</p>
+            <p>我们无法访问或控制班级魔方的服务器，因此无法对您的文件进行任何操作或删除。</p>
+            <p>我们不存储你的文件，意味着生成的链接需要你自己保存，丢失我们无法找回。</p>
+            <p>禁止上传任何违规内容，包括但不限于违法、色情、侵权等文件。</p>
+            <p>我们对上传的文件不承担任何法律责任，您应对上传的文件拥有合法版权，否则将承担全部法律责任。</p>
+            <p>我们有权随时终止或修改服务，无需提前通知。</p>
+            <p>本条款受中华人民共和国法律管辖。</p>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2026 RF免费图床. 保留所有权利.</p>
+            <div class="footer-links">
+                <a href="#terms">服务条款</a>
+                <a href="https://www.itrf.cn" target="_blank">联系站长</a>
+                <a href="https://github.com/itrfcn/FreePic-PHP/" target="_blank">开源地址</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let selectedFiles = [];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const selectedFilesDiv = document.getElementById('selectedFiles');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            // 拖拽事件
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            
+            dropZone.addEventListener('dragleave', function() {
+                dropZone.classList.remove('dragover');
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            // 点击整个div区域选择文件
+            dropZone.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // 文件选择事件
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            // 上传按钮事件
+            uploadBtn.addEventListener('click', function() {
+                if (selectedFiles.length > 0) {
+                    uploadFiles();
+                }
+            });
+        });
+        
+        // 允许上传的文件类型（根据用户要求）
+        const allowedFileTypes = [
+            // 图片文件
+            'image/jpeg', 'image/png', 'image/jpg',
+            // 文档文件
+            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            // 文本文件
+            'text/plain'
+        ];
+        
+        // 允许的文件扩展名（根据用户要求）
+        const allowedExtensions = [
+            'png', 'jpg', 'jpeg', 'txt', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'
+        ];
+        
+        // 检查文件类型是否允许
+        function isFileTypeAllowed(file) {
+            // 检查MIME类型
+            if (allowedFileTypes.includes(file.type)) {
+                return true;
+            }
+            
+            // 检查文件扩展名
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (allowedExtensions.includes(fileExtension)) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // 处理选择的文件
+        function handleFiles(files) {
+            // 过滤出允许的文件
+            const filteredFiles = Array.from(files).filter(file => {
+                return isFileTypeAllowed(file);
+            });
+            
+            // 显示过滤结果
+            if (filteredFiles.length < files.length) {
+                const rejectedCount = files.length - filteredFiles.length;
+                showResult(`已过滤掉 ${rejectedCount} 个不支持的文件类型。只允许上传：.png, .jpg, .jpeg, .txt, .doc, .docx, .ppt, .pptx, .xls, .xlsx`, 'error');
+            } else {
+                // 隐藏之前的错误信息
+                document.getElementById('result').style.display = 'none';
+            }
+            
+            selectedFiles = filteredFiles;
+            const selectedFilesDiv = document.getElementById('selectedFiles');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            // 清空之前的选择
+            selectedFilesDiv.innerHTML = '';
+            
+            // 显示选择的文件
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                // 根据文件类型选择图标
+                let fileIcon = 'fa-file';
+                if (file.type.startsWith('image/')) {
+                    fileIcon = 'fa-file-image';
+                } else if (file.type.startsWith('video/')) {
+                    fileIcon = 'fa-file-video';
+                } else if (file.type.startsWith('audio/')) {
+                    fileIcon = 'fa-file-audio';
+                } else if (file.type === 'application/pdf') {
+                    fileIcon = 'fa-file-pdf';
+                } else if (file.type.includes('document')) {
+                    fileIcon = 'fa-file-word';
+                } else if (file.type.includes('spreadsheet')) {
+                    fileIcon = 'fa-file-excel';
+                } else if (file.type.includes('presentation')) {
+                    fileIcon = 'fa-file-powerpoint';
+                } else if (file.type.includes('zip') || file.type.includes('compressed')) {
+                    fileIcon = 'fa-file-archive';
+                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    fileIcon = 'fa-file-alt';
+                } else if (file.name.endsWith('.html') || file.name.endsWith('.css') || file.name.endsWith('.js')) {
+                    fileIcon = 'fa-file-code';
+                }
+                
+                fileItem.innerHTML = `
+                    <span><i class="fas ${fileIcon}"></i> ${file.name} (${formatFileSize(file.size)})</span>
+                    <button onclick="removeFile(${index})" class="remove-file-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                selectedFilesDiv.appendChild(fileItem);
+            });
+            
+            // 启用上传按钮
+            if (selectedFiles.length > 0) {
+                uploadBtn.disabled = false;
+            } else {
+                uploadBtn.disabled = true;
+            }
+        }
+        
+        // 移除文件
+        function removeFile(index) {
+            const fileItem = document.querySelectorAll('.file-item')[index];
+            if (fileItem) {
+                selectedFiles.splice(index, 1);
+                handleFiles(selectedFiles); // 重新渲染文件列表
+            }
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // 获取OSS密钥
+        async function getOssKey() {
+            try {
+                const response = await fetch('getkey.php');
+                if (!response.ok) {
+                    throw new Error('Failed to get OSS key');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error getting OSS key:', error);
+                showResult('获取OSS密钥失败: ' + error.message, 'error');
+                return null;
+            }
+        }
+        
+        // 上传文件到OSS
+        async function uploadToOSS(file, ossKey) {
+            return new Promise((resolve, reject) => {
+                // 创建表单数据
+                const formData = new FormData();
+                formData.append('OSSAccessKeyId', ossKey.accessid);
+                formData.append('policy', ossKey.policy);
+                formData.append('Signature', ossKey.signature);
+                formData.append('success_action_status', '200');
+                formData.append('callback', ossKey.callback);
+                
+                // 生成随机文件名
+                const timestamp = new Date().getTime();
+                const randomStr = Math.random().toString(36).substring(2, 12);
+                const fileExtension = file.name.split('.').pop();
+                const fileName = `${timestamp}${randomStr}.${fileExtension}`;
+                const key = ossKey.dir + '/' + fileName;
+                formData.append('key', key);
+                
+                // 添加文件
+                formData.append('file', file);
+                
+                // 创建XMLHttpRequest并监听进度
+                const xhr = new XMLHttpRequest();
+                const progressBar = document.getElementById('progressBar');
+                const progress = document.getElementById('progress');
+                
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percent = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percent + '%';
+                        progress.style.display = 'block';
+                    }
+                });
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // 解析响应
+                        let responseData;
+                        try {
+                            responseData = JSON.parse(xhr.responseText);
+                            resolve(responseData.data);
+                        } catch (error) {
+                            // 如果不是JSON响应，使用文件名构造URL
+                            const fileUrl = ossKey.host + '/' + key;
+                            resolve({ file: fileUrl, name: file.name, size: file.size, type: file.type });
+                        }
+                    } else {
+                        reject(new Error('Upload failed with status: ' + xhr.status));
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    reject(new Error('Network error during upload'));
+                };
+                
+                // 发送请求
+                xhr.open('POST', ossKey.host, true);
+                xhr.send(formData);
+            });
+        }
+        
+        // 上传文件
+        async function uploadFiles() {
+            try {
+                // 显示进度条
+                const progress = document.getElementById('progress');
+                const progressBar = document.getElementById('progressBar');
+                progress.style.display = 'block';
+                progressBar.style.width = '0%';
+                
+                // 获取OSS密钥
+                const ossKey = await getOssKey();
+                if (!ossKey) return;
+                
+                // 上传所有文件
+                const results = [];
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const result = await uploadToOSS(file, ossKey);
+                    results.push(result);
+                }
+                
+                // 隐藏进度条
+                progress.style.display = 'none';
+                
+                // 显示结果
+                if (results.length === 1) {
+                    showResult(`上传成功！文件链接: <a href="${results[0].file}" target="_blank">${results[0].file}</a> <button class="copy-btn" onclick="copyToClipboard('${results[0].file}')">复制链接</button>`, 'success');
+                } else {
+                    let resultHtml = '<h3>上传成功！</h3>';
+                    results.forEach((result, index) => {
+                        resultHtml += `<p>文件 ${index + 1}: <a href="${result.file}" target="_blank">${result.file}</a> <button class="copy-btn" onclick="copyToClipboard('${result.file}')">复制链接</button></p>`;
+                    });
+                    showResult(resultHtml, 'success');
+                }
+                
+                // 上传成功后清除已选择的文件列表，防止重复上传
+                selectedFiles = [];
+                const selectedFilesDiv = document.getElementById('selectedFiles');
+                const uploadBtn = document.getElementById('uploadBtn');
+                selectedFilesDiv.innerHTML = '';
+                uploadBtn.disabled = true;
+                
+            } catch (error) {
+                console.error('Error uploading files:', error);
+                showResult('上传失败: ' + error.message, 'error');
+                
+                // 隐藏进度条
+                const progress = document.getElementById('progress');
+                progress.style.display = 'none';
+            }
+        }
+        
+        // 显示结果
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = type;
+            resultDiv.style.display = 'block';
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            // 改变按钮状态和样式
+            button.innerHTML = '<i class="fas fa-check"></i> 已复制';
+            button.style.background = '#2ecc71';
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // 恢复按钮原始状态
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#3498db';
+                }, 1500);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                button.innerHTML = '<i class="fas fa-times"></i> 复制失败';
+                button.style.background = '#e74c3c';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#3498db';
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

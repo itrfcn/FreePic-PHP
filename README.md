@@ -24,3 +24,21 @@ COOKIE_STRING=remember_student=xxx
 - 问卷的链接就是 COURSE_URL 参数。
 - COOKIE_STRING是学生账号的Cookie信息的remember_student部分，s=部分会自动获取。
 - Cookie有效期为5年放心使用。
+
+
+## 相关项目
+
+- Flask版本：[PicUp](https://github.com/itrfcn/PicUp)
+- Python版本：[FreePic](https://github.com/itrfcn/FreePic/)
+
+## 许可证
+
+MIT License
+
+## 贡献
+
+欢迎提交Issue和Pull Request来改进这个项目。
+
+## 联系方式
+
+如有问题或建议，请通过GitHub Issue反馈。
